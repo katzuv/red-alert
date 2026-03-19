@@ -1,8 +1,12 @@
 import asyncio
+
+from dotenv import load_dotenv
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 
 import consts
+
+load_dotenv()
 
 
 async def main():
