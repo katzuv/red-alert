@@ -12,3 +12,6 @@ SESSION_STRING = os.environ["SESSION_STRING"]
 
 MESSAGE_SUFFIX = """.
 🚨שתפו-https://t.me/beforeredalert"""
+
+if __name__ == "__main__":
+    print("\n".join((str(API_ID), API_HASH, str(DESTINATION_CHANNEL), SESSION_STRING)))
