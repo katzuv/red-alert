@@ -1,4 +1,5 @@
 import asyncio
+from pathlib import Path
 
 from dotenv import load_dotenv
 from telethon import TelegramClient
@@ -19,7 +20,9 @@ async def main():
     await client.start(password=lambda: input("Please enter your 2FA Cloud Password: "))
 
     print("\n✅ Login successful! Here is your StringSession:\n")
-    print(client.session.save())
+    session = client.session.save()
+    print(session)
+    Path(".session_string").write_text(session)
 
     print("\n---------------------------------------------------------")
     print("🚨 COPY THE ENTIRE STRING ABOVE.")
