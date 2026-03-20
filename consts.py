@@ -7,7 +7,7 @@ load_dotenv()
 
 API_ID = int(os.environ["API_ID"])
 API_HASH = os.environ["API_HASH"]
-SOURCE_CHANNEL = "@beforeredalert"
+SOURCE_CHANNEL = os.environ["SOURCE_CHANNEL"]
 DESTINATION_CHANNEL = int(os.environ["DESTINATION_CHANNEL"])
 SESSION = StringSession(os.environ["SESSION_STRING"])
 
