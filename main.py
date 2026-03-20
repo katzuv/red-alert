@@ -25,6 +25,16 @@ async def send_message(text: str, alert_media):
     )
 
 
+def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
+    if "t.me/" in text or "telegram.me/" in text:
+        return True
+
+    try:
+        return messages[reply_to_msg_id].is_spam
+    except KeyError:
+        return False
+
+
 # The Event Listener
 @client.on(events.NewMessage(chats=consts.SOURCE_CHANNEL))
 async def forward_alert(event):
