@@ -48,6 +48,8 @@ def clean_queue_if_needed():
 # The Event Listener
 @client.on(events.NewMessage(chats=consts.SOURCE_CHANNEL))
 async def forward_alert(event):
+    clean_queue_if_needed()
+
     message = event.message
     text = message.text or ""
 
@@ -83,8 +85,6 @@ async def forward_alert(event):
         return
 
     messages[message.id] = Message(is_spam, reply_to_msg_id, sent_message_id)
-
-    clean_queue_if_needed()
 
 
 async def main():
