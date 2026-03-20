@@ -51,8 +51,9 @@ async def forward_alert(event):
     # Check for ads
     reply_to_msg_id = message.reply_to_msg_id
     is_spam = is_message_spam(text, reply_to_msg_id)
-    messages[message.id] = Message(is_spam=is_spam, reply_to=reply_to_msg_id)
+
     if is_spam:
+        messages[message.id] = Message(is_spam, reply_to_msg_id, None)
         print("Dropped an ad promoting another channel.")
         return
 
@@ -70,6 +71,9 @@ async def forward_alert(event):
 
     except Exception as e:
         print(f"Failed to forward message: {e}")
+        return
+
+    messages[message.id] = Message(is_spam, reply_to_msg_id, sent_message_id)
 
     if len(messages) > consts.MAX_QUEUE_SIZE:
         # Dictionaries in Python 3.7+ maintain insertion order, so popping the first item will remove the oldest message.
