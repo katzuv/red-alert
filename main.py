@@ -91,6 +91,41 @@ async def forward_alert(event):
     messages[message.id] = Message(is_spam, reply_to_msg_id, sent_message_id)
 
 
+async def edit_message(new_text: str, message_id: int):
+    await client.edit_message(
+        entity=consts.DESTINATION_CHANNEL, message=message_id, text=new_text
+    )
+    print("Mirrored an edited message.")
+
+
+@client.on(events.MessageEdited(chats=consts.SOURCE_CHANNEL))
+async def sync_edits(event):
+    message = event.message
+    if message.id not in messages:
+        return
+
+    my_original_message = messages[message.id]
+    if my_original_message.is_spam:
+        return
+
+    text = clean_text(message.text)
+    if is_message_spam(text, message.reply_to_msg_id):
+        return
+
+    message_id = my_original_message.id
+    try:
+        await edit_message(text, message_id)
+
+    except FloodWaitError as e:
+        print(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
+        await asyncio.sleep(e.seconds)
+        await edit_message(text, message_id)
+
+    except Exception as e:
+        print(f"Failed to forward message: {e}")
+        return
+
+
 async def main():
     print("Securely booted up! Listening for alerts...")
     await client.start()
