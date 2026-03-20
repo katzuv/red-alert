@@ -16,6 +16,8 @@ client = TelegramClient(consts.SESSION, consts.API_ID, consts.API_HASH)
 
 Message = namedtuple("Message", ["is_spam", "original_reply_to"])
 
+messages: dict[int, Message] = {}
+
 
 async def send_message(text: str, alert_media):
     await client.send_message(
