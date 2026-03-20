@@ -53,6 +53,10 @@ async def forward_alert(event):
     except Exception as e:
         print(f"Failed to forward message: {e}")
 
+    if len(messages) > consts.MAX_QUEUE_SIZE:
+        # Dictionaries in Python 3.7+ maintain insertion order, so popping the first item will remove the oldest message.
+        messages.pop(next(iter(messages)))
+
 
 async def main():
     print("Securely booted up! Listening for alerts...")
