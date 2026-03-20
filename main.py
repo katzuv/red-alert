@@ -1,4 +1,5 @@
 import asyncio
+from collections import namedtuple
 
 from dotenv import load_dotenv
 from telethon import TelegramClient, events
@@ -11,6 +12,9 @@ load_dotenv()
 
 # Initialize the client
 client = TelegramClient(consts.SESSION, consts.API_ID, consts.API_HASH)
+
+
+Message = namedtuple("Message", ["is_spam", "original_reply_to"])
 
 
 async def send_message(text: str, alert_media):
