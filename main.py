@@ -14,7 +14,7 @@ load_dotenv()
 client = TelegramClient(consts.SESSION, consts.API_ID, consts.API_HASH)
 
 
-Message = namedtuple("Message", ["is_spam", "original_reply_to"])
+Message = namedtuple("Message", ["is_spam", "original_reply_to", "id"])
 
 messages: dict[int, Message] = {}
 
