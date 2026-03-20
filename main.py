@@ -26,6 +26,7 @@ async def send_message(text: str, alert_media, mine_reply_to=None) -> int:
         file=alert_media,
         reply_to=mine_reply_to,
     )
+    print("Forwarded a clean alert.")
     return sent_message.id
 
 
@@ -74,15 +75,14 @@ async def forward_alert(event):
         mine_reply_to = messages[reply_to_msg_id].id
     except KeyError:
         mine_reply_to = None
+
     try:
         sent_message_id = await send_message(text, alert_media, mine_reply_to)
-        print("Forwarded a clean alert!")
 
     except FloodWaitError as e:
         print(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
         await asyncio.sleep(e.seconds)
         sent_message_id = await send_message(text, alert_media, mine_reply_to)
-        print("Forwarded the alert after sleeping.")
 
     except Exception as e:
         print(f"Failed to forward message: {e}")
