@@ -39,6 +39,12 @@ def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
         return False
 
 
+def clean_queue_if_needed():
+    if len(messages) >= consts.MAX_QUEUE_SIZE:
+        # Dictionaries in Python 3.7+ maintain insertion order, so popping the first item will remove the oldest message.
+        messages.pop(next(iter(messages)))
+
+
 # The Event Listener
 @client.on(events.NewMessage(chats=consts.SOURCE_CHANNEL))
 async def forward_alert(event):
@@ -78,9 +84,7 @@ async def forward_alert(event):
 
     messages[message.id] = Message(is_spam, reply_to_msg_id, sent_message_id)
 
-    if len(messages) > consts.MAX_QUEUE_SIZE:
-        # Dictionaries in Python 3.7+ maintain insertion order, so popping the first item will remove the oldest message.
-        messages.pop(next(iter(messages)))
+    clean_queue_if_needed()
 
 
 async def main():
