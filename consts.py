@@ -14,4 +14,4 @@ SESSION = StringSession(os.environ["SESSION_STRING"])
 MESSAGE_SUFFIX = """.
 🚨שתפו-https://t.me/beforeredalert"""
 
-MAX_QUEUE_SIZE = 50
+MAX_QUEUE_SIZE = int(os.environ["MAX_QUEUE_SIZE"])
