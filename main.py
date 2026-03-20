@@ -24,13 +24,13 @@ async def send_message(text: str, alert_media):
 async def forward_alert(event):
     text = event.message.text or ""
 
+    # Remove signature
+    text = text.replace(consts.MESSAGE_SUFFIX, "").strip()
+
     # Check for ads
     if "t.me/" in text or "telegram.me/" in text:
         print("Dropped an ad promoting another channel.")
         return
-
-    # Remove signature
-    text = text.replace(consts.MESSAGE_SUFFIX, "").strip()
 
     alert_media = event.message.media
 
