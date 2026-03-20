@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from collections import namedtuple
 
 from dotenv import load_dotenv
@@ -9,6 +10,10 @@ import consts
 
 # Load variables from .env if running locally
 load_dotenv()
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
 # Initialize the client
 client = TelegramClient(consts.SESSION, consts.API_ID, consts.API_HASH)
@@ -26,7 +31,7 @@ async def send_message(text: str, alert_media, mine_reply_to=None) -> int:
         file=alert_media,
         reply_to=mine_reply_to,
     )
-    print("Forwarded a clean alert.")
+    logging.info("Forwarded a clean alert.")
     return sent_message.id
 
 
@@ -67,7 +72,7 @@ async def forward_alert(event):
 
     if is_spam:
         messages[message.id] = Message(is_spam, reply_to_msg_id, None)
-        print("Dropped an ad promoting another channel.")
+        logging.info("Dropped an ad promoting another channel.")
         return
 
     alert_media = message.media
@@ -80,12 +85,12 @@ async def forward_alert(event):
         sent_message_id = await send_message(text, alert_media, mine_reply_to)
 
     except FloodWaitError as e:
-        print(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
+        logging.info(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
         await asyncio.sleep(e.seconds)
         sent_message_id = await send_message(text, alert_media, mine_reply_to)
 
-    except Exception as e:
-        print(f"Failed to forward message: {e}")
+    except Exception:
+        logging.exception("Failed to forward message")
         return
 
     messages[message.id] = Message(is_spam, reply_to_msg_id, sent_message_id)
@@ -95,7 +100,7 @@ async def edit_message(new_text: str, message_id: int):
     await client.edit_message(
         entity=consts.DESTINATION_CHANNEL, message=message_id, text=new_text
     )
-    print("Mirrored an edited message.")
+    logging.info("Mirrored an edited message.")
 
 
 @client.on(events.MessageEdited(chats=consts.SOURCE_CHANNEL))
@@ -117,12 +122,12 @@ async def sync_edits(event):
         await edit_message(text, message_id)
 
     except FloodWaitError as e:
-        print(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
+        logging.info(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
         await asyncio.sleep(e.seconds)
         await edit_message(text, message_id)
 
-    except Exception as e:
-        print(f"Failed to forward message: {e}")
+    except Exception:
+        logging.exception("Failed to edit message")
         return
 
 
