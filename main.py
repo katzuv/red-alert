@@ -58,7 +58,7 @@ async def forward_alert(event):
         return
 
     alert_media = message.media
-
+    mine_reply_to = messages[reply_to_msg_id].id if reply_to_msg_id else None
     try:
         sent_message_id = await send_message(text, alert_media, mine_reply_to)
         print("Forwarded a clean alert!")
