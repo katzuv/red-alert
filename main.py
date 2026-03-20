@@ -29,6 +29,10 @@ async def send_message(text: str, alert_media, mine_reply_to=None) -> int:
     return sent_message.id
 
 
+def clean_text(text: str) -> str:
+    return text.replace(consts.MESSAGE_SUFFIX, "").strip()
+
+
 def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
     if "t.me/" in text or "telegram.me/" in text:
         return True
@@ -54,7 +58,7 @@ async def forward_alert(event):
     text = message.text or ""
 
     # Remove signature
-    text = text.replace(consts.MESSAGE_SUFFIX, "").strip()
+    text = clean_text(text)
 
     # Check for ads
     reply_to_msg_id = message.reply_to_msg_id
