@@ -38,17 +38,21 @@ def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
 # The Event Listener
 @client.on(events.NewMessage(chats=consts.SOURCE_CHANNEL))
 async def forward_alert(event):
-    text = event.message.text or ""
+    message = event.message
+    text = message.text or ""
 
     # Remove signature
     text = text.replace(consts.MESSAGE_SUFFIX, "").strip()
 
     # Check for ads
-    if "t.me/" in text or "telegram.me/" in text:
+    reply_to_msg_id = message.reply_to_msg_id
+    is_spam = is_message_spam(text, reply_to_msg_id)
+    messages[message.id] = Message(is_spam=is_spam, reply_to=reply_to_msg_id)
+    if is_spam:
         print("Dropped an ad promoting another channel.")
         return
 
-    alert_media = event.message.media
+    alert_media = message.media
 
     try:
         await send_message(text, alert_media)
