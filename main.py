@@ -19,10 +19,14 @@ Message = namedtuple("Message", ["is_spam", "original_reply_to"])
 messages: dict[int, Message] = {}
 
 
-async def send_message(text: str, alert_media):
-    await client.send_message(
-        consts.DESTINATION_CHANNEL, message=text, file=alert_media
+async def send_message(text: str, alert_media, mine_reply_to=None) -> int:
+    sent_message = await client.send_message(
+        consts.DESTINATION_CHANNEL,
+        message=text,
+        file=alert_media,
+        reply_to=mine_reply_to,
     )
+    return sent_message.id
 
 
 def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
@@ -55,13 +59,13 @@ async def forward_alert(event):
     alert_media = message.media
 
     try:
-        await send_message(text, alert_media)
+        sent_message_id = await send_message(text, alert_media, mine_reply_to)
         print("Forwarded a clean alert!")
 
     except FloodWaitError as e:
         print(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
         await asyncio.sleep(e.seconds)
-        await send_message(text, alert_media)
+        sent_message_id = await send_message(text, alert_media, mine_reply_to)
         print("Forwarded the alert after sleeping.")
 
     except Exception as e:
