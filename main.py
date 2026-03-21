@@ -83,7 +83,9 @@ async def forward_alert(event):
 
     if is_spam:
         messages[source_channel_message.id] = Message(is_spam, reply_to_msg_id, None)
-        logging.info("Dropped an ad promoting another channel.")
+        logging.info(
+            f"Dropped an ad promoting another channel. Message ID: {source_channel_message.id}"
+        )
         return
 
     alert_media = source_channel_message.media
