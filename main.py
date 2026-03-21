@@ -68,6 +68,12 @@ async def forward_alert(event):
     source_channel_message = event.message
     text = source_channel_message.text or ""
 
+    if source_channel_message.id in messages:
+        logging.info(
+            f"Already processed message ID {source_channel_message.id}, skipping."
+        )
+        return
+
     # Remove signature
     text = clean_text(text)
 
