@@ -17,7 +17,7 @@ async def main():
     client = TelegramClient(StringSession(), consts.API_ID, consts.API_HASH)
 
     # Start the client (this triggers the phone number & code prompt)
-    await client.start(password=lambda: input("Please enter your 2FA Cloud Password: "))
+    await client.start(phone=consts.PHONE_NUMBER, password=consts.PASSWORD)
 
     print("\n✅ Login successful! Here is your StringSession:\n")
     session = client.session.save()
