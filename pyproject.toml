@@ -1,0 +1,10 @@
+[project]
+name = "beforeredalert"
+version = "0.1.0"
+description = "Get your Red Alerts in time, without all the spam!"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "python-dotenv==1.2.2",
+    "telethon==1.42.0",
+]
