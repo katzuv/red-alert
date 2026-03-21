@@ -96,35 +96,39 @@ async def forward_alert(event):
     messages[message.id] = Message(is_spam, reply_to_msg_id, sent_message_id)
 
 
-async def edit_message(new_text: str, message_id: int):
+async def edit_message(
+    new_text: str, my_message_id: int, source_channel_message_id: int
+):
     await client.edit_message(
-        entity=consts.DESTINATION_CHANNEL, message=message_id, text=new_text
+        entity=consts.DESTINATION_CHANNEL, message=my_message_id, text=new_text
     )
-    logging.info("Mirrored an edited message.")
+    logging.info(
+        f"Mirrored an edited message. Original ID: {source_channel_message_id}, my ID: {my_message_id}"
+    )
 
 
 @client.on(events.MessageEdited(chats=consts.SOURCE_CHANNEL))
 async def sync_edits(event):
-    message = event.message
-    if message.id not in messages:
+    source_channel_message = event.message
+    if source_channel_message.id not in messages:
         return
 
-    my_original_message = messages[message.id]
+    my_original_message = messages[source_channel_message.id]
     if my_original_message.is_spam:
         return
 
-    text = clean_text(message.text)
-    if is_message_spam(text, message.reply_to_msg_id):
+    text = clean_text(source_channel_message.text)
+    if is_message_spam(text, source_channel_message.reply_to_msg_id):
         return
 
-    message_id = my_original_message.id
+    my_message_id = my_original_message.id
     try:
-        await edit_message(text, message_id)
+        await edit_message(text, my_message_id, source_channel_message.id)
 
     except FloodWaitError as e:
         logging.info(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
         await asyncio.sleep(e.seconds)
-        await edit_message(text, message_id)
+        await edit_message(text, my_message_id, source_channel_message.id)
 
     except MessageNotModifiedError:
         # Telegram is just telling us the text is already identical. We can safely ignore it!
