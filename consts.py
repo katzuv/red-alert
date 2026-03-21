@@ -5,6 +5,9 @@ from telethon.sessions import StringSession
 
 load_dotenv()
 
+PHONE_NUMBER = os.getenv("PHONE_NUMBER")
+PASSWORD = os.getenv("TELEGRAM_PASSWORD")
+
 API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 SOURCE_CHANNEL = os.getenv("SOURCE_CHANNEL")
