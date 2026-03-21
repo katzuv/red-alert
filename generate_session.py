@@ -25,8 +25,9 @@ async def main():
     Path(".session_string").write_text(session)
 
     print("\n---------------------------------------------------------")
-    print("🚨 COPY THE ENTIRE STRING ABOVE.")
-    print("🚨 GO TO GITHUB -> SECRETS -> ADD AS 'TELEGRAM_SESSION'.")
+    print("🚨 COPY THE ENTIRE STRING ABOVE OR FROM THE `.session_string` file.")
+    print("🚨 GO TO HEROKU -> SETTINGS -> REVEAL CONFIG VARS.")
+    print("🚨 PASTE THIS AS `SESSION_STRING`.")
     print("🚨 NEVER SHARE THIS STRING WITH ANYONE. IT IS YOUR PASSWORD.")
 
     # Close the connection safely
