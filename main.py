@@ -45,7 +45,7 @@ def clean_text(text: str) -> str:
 
 
 def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
-    if "t.me/" in text or "telegram.me/" in text:
+    if "http" in text:
         return True
 
     try:
