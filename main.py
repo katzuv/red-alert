@@ -4,7 +4,7 @@ from collections import namedtuple
 
 from dotenv import load_dotenv
 from telethon import TelegramClient, events
-from telethon.errors import FloodWaitError
+from telethon.errors import FloodWaitError, MessageNotModifiedError
 
 import consts
 
@@ -125,6 +125,11 @@ async def sync_edits(event):
         logging.info(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
         await asyncio.sleep(e.seconds)
         await edit_message(text, message_id)
+
+    except MessageNotModifiedError:
+        # Telegram is just telling us the text is already identical. We can safely ignore it!
+        logging.info("Ignored an edit because the text didn't actually change.")
+        return
 
     except Exception:
         logging.exception("Failed to edit message")
