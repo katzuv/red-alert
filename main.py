@@ -24,14 +24,19 @@ Message = namedtuple("Message", ["is_spam", "original_reply_to", "id"])
 messages: dict[int, Message] = {}
 
 
-async def send_message(text: str, alert_media, mine_reply_to=None) -> int:
+async def send_message(
+    text: str, alert_media, mine_reply_to: int | None, source_channel_message_id: int
+) -> int:
     sent_message = await client.send_message(
         consts.DESTINATION_CHANNEL,
         message=text,
         file=alert_media,
         reply_to=mine_reply_to,
     )
-    logging.info("Forwarded a clean alert.")
+    log = f"Forwarded a clean alert. Original ID: {source_channel_message_id}, my ID: {sent_message.id}"
+    if mine_reply_to:
+        log += f". Reply to my message ID: {mine_reply_to}"
+    logging.info(log)
     return sent_message.id
 
 
@@ -60,40 +65,46 @@ def clean_queue_if_needed():
 async def forward_alert(event):
     clean_queue_if_needed()
 
-    message = event.message
-    text = message.text or ""
+    source_channel_message = event.message
+    text = source_channel_message.text or ""
 
     # Remove signature
     text = clean_text(text)
 
     # Check for ads
-    reply_to_msg_id = message.reply_to_msg_id
+    reply_to_msg_id = source_channel_message.reply_to_msg_id
     is_spam = is_message_spam(text, reply_to_msg_id)
 
     if is_spam:
-        messages[message.id] = Message(is_spam, reply_to_msg_id, None)
+        messages[source_channel_message.id] = Message(is_spam, reply_to_msg_id, None)
         logging.info("Dropped an ad promoting another channel.")
         return
 
-    alert_media = message.media
+    alert_media = source_channel_message.media
     try:
         mine_reply_to = messages[reply_to_msg_id].id
     except KeyError:
         mine_reply_to = None
 
     try:
-        sent_message_id = await send_message(text, alert_media, mine_reply_to)
+        sent_message_id = await send_message(
+            text, alert_media, mine_reply_to, source_channel_message.id
+        )
 
     except FloodWaitError as e:
         logging.info(f"Rate limit hit! Sleeping for {e.seconds} seconds...")
         await asyncio.sleep(e.seconds)
-        sent_message_id = await send_message(text, alert_media, mine_reply_to)
+        sent_message_id = await send_message(
+            text, alert_media, mine_reply_to, source_channel_message.id
+        )
 
     except Exception:
         logging.exception("Failed to forward message")
         return
 
-    messages[message.id] = Message(is_spam, reply_to_msg_id, sent_message_id)
+    messages[source_channel_message.id] = Message(
+        is_spam, reply_to_msg_id, sent_message_id
+    )
 
 
 async def edit_message(
