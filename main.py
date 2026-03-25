@@ -19,7 +19,7 @@ logging.basicConfig(
 client = TelegramClient(consts.SESSION, consts.API_ID, consts.API_HASH)
 
 
-Message = namedtuple("Message", ["is_spam", "original_reply_to", "id"])
+Message = namedtuple("Message", ["is_spam", "original_reply_to", "id", "text"])
 
 messages: dict[int, Message] = {}
 
@@ -66,7 +66,7 @@ async def forward_alert(event):
     clean_queue_if_needed()
 
     source_channel_message = event.message
-    text = source_channel_message.text or ""
+    original_text = source_channel_message.text or ""
 
     if source_channel_message.id in messages:
         logging.info(
@@ -75,14 +75,16 @@ async def forward_alert(event):
         return
 
     # Remove signature
-    text = clean_text(text)
+    text = clean_text(original_text)
 
     # Check for ads
     reply_to_msg_id = source_channel_message.reply_to_msg_id
     is_spam = is_message_spam(text, reply_to_msg_id)
 
     if is_spam:
-        messages[source_channel_message.id] = Message(is_spam, reply_to_msg_id, None)
+        messages[source_channel_message.id] = Message(
+            is_spam, reply_to_msg_id, None, original_text
+        )
         logging.info(
             f"Dropped an ad promoting another channel. Message ID: {source_channel_message.id}"
         )
@@ -111,7 +113,7 @@ async def forward_alert(event):
         return
 
     messages[source_channel_message.id] = Message(
-        is_spam, reply_to_msg_id, sent_message_id
+        is_spam, reply_to_msg_id, sent_message_id, original_text
     )
 
 
@@ -133,6 +135,10 @@ async def sync_edits(event):
         return
 
     my_original_message = messages[source_channel_message.id]
+    logging.info(
+        f"Received an edit for original ID {source_channel_message.id}, my ID {my_original_message.id}, Original text: {my_original_message.text}, New text: {source_channel_message.text}"
+    )
+
     if my_original_message.is_spam:
         return
 
