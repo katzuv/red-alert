@@ -167,7 +167,7 @@ async def sync_edits(event):
 
 
 async def main():
-    print("Securely booted up! Listening for alerts...")
+    logging.info("Securely booted up! Listening for alerts...")
     await client.start()
     # Keep the script running and listening for new messages
     await client.run_until_disconnected()
