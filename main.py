@@ -41,7 +41,7 @@ async def send_message(
 
 
 def clean_text(text: str) -> str:
-    return text.replace(consts.MESSAGE_SUFFIX, "").strip()
+    return text.replace(consts.MESSAGE_SIGNATURE, "").strip()
 
 
 def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
