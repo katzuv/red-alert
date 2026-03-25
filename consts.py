@@ -26,3 +26,8 @@ MESSAGE_SIGNATURE = """.
 https://t.me/beforeredalert"""
 
 MAX_QUEUE_SIZE = int(os.getenv("MAX_QUEUE_SIZE"))
+
+if __name__ == "__main__":
+    for key, value in list(globals().items()):
+        if key.isupper():
+            print(f"{key}: {value}")
