@@ -22,6 +22,7 @@ DESTINATION_CHANNEL = _load_as_int_or_str("DESTINATION_CHANNEL")
 SESSION = StringSession(os.getenv("SESSION_STRING"))
 
 MESSAGE_SIGNATURE = """.
-🚨שתפו-https://t.me/beforeredalert"""
+🚨לקבלת עדכונים על שיגורים לפני פקער🚀🚀-
+https://t.me/beforeredalert"""
 
 MAX_QUEUE_SIZE = int(os.getenv("MAX_QUEUE_SIZE"))
