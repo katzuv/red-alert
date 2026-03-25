@@ -143,6 +143,11 @@ async def sync_edits(event):
         return
 
     text = clean_text(source_channel_message.text)
+
+    if text == my_original_message.text:
+        logging.info("Dropping an edit because the cleaned text didn't change.")
+        return
+
     if is_message_spam(text, source_channel_message.reply_to_msg_id):
         logging.info("Dropping an edit because it turned into an ad.")
         return
