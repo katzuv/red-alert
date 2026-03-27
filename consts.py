@@ -21,9 +21,14 @@ SOURCE_CHANNEL = _load_as_int_or_str("SOURCE_CHANNEL")
 DESTINATION_CHANNEL = _load_as_int_or_str("DESTINATION_CHANNEL")
 SESSION = StringSession(os.getenv("SESSION_STRING"))
 
-MESSAGE_SIGNATURE = """.
+STRINGS_TO_REMOVE = [
+    """.
 🚨לקבלת עדכונים על שיגורים לפני פקער🚀🚀-
-https://t.me/beforeredalert"""
+https://t.me/beforeredalert""",
+    """.
+https://t.me/beforeredalert""",
+    "https://t.me/beforeredalert",
+]
 
 MAX_QUEUE_SIZE = int(os.getenv("MAX_QUEUE_SIZE"))
 
