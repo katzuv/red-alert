@@ -27,7 +27,10 @@ STRINGS_TO_REMOVE = [
 https://t.me/beforeredalert""",
     """.
 https://t.me/beforeredalert""",
+    """.
+t.me/beforeredalert""",
     "https://t.me/beforeredalert",
+    "t.me/beforeredalert"
 ]
 
 MAX_QUEUE_SIZE = int(os.getenv("MAX_QUEUE_SIZE"))
