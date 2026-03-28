@@ -172,6 +172,7 @@ async def sync_edits(event):
         logging.exception("Failed to edit message")
         return
 
+
 @client.on(events.MessageDeleted(chats=consts.SOURCE_CHANNEL))
 async def sync_deletions(event):
     original_ids = []
@@ -182,24 +183,29 @@ async def sync_deletions(event):
         try:
             message = messages[original_id]
         except KeyError:
-            logging.warning(f"Received deletion for message absent from database. Original ID: {original_id}")
+            logging.warning(
+                f"Received deletion for message absent from database. Original ID: {original_id}"
+            )
             continue
 
         if message.is_spam:
-            logging.info(f"Received deletion for spam message. Original ID: {original_id}")
+            logging.info(
+                f"Received deletion for spam message. Original ID: {original_id}"
+            )
         else:
             my_ids.append(message.id)
 
     if not my_ids:
-        logging.info(f"No messages to actually be deleted.")
+        logging.info("No messages to actually be deleted.")
         return
 
-    await client.delete_messages(
-        entity=consts.DESTINATION_CHANNEL, message_ids=my_ids)
+    await client.delete_messages(entity=consts.DESTINATION_CHANNEL, message_ids=my_ids)
 
     original_ids = ", ".join(map(str, original_ids))
     my_ids = ", ".join(map(str, my_ids))
-    logging.info(f"Successfully mirrored a deletion. Original IDs: {original_ids}, my ID: {my_ids}")
+    logging.info(
+        f"Successfully mirrored a deletion. Original IDs: {original_ids}, my ID: {my_ids}"
+    )
 
 
 async def main():

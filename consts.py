@@ -5,12 +5,14 @@ from telethon.sessions import StringSession
 
 load_dotenv()
 
+
 def _load_as_int_or_str(env_var_name: str):
     value = os.getenv(env_var_name)
     try:
         return int(value)
     except ValueError:
         return value
+
 
 PHONE_NUMBER = os.getenv("PHONE_NUMBER")
 PASSWORD = os.getenv("TELEGRAM_PASSWORD")
@@ -30,7 +32,7 @@ https://t.me/beforeredalert""",
     """.
 t.me/beforeredalert""",
     "https://t.me/beforeredalert",
-    "t.me/beforeredalert"
+    "t.me/beforeredalert",
 ]
 
 MAX_QUEUE_SIZE = int(os.getenv("MAX_QUEUE_SIZE"))
