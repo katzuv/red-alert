@@ -47,8 +47,9 @@ def clean_text(text: str) -> str:
 
 
 def is_message_spam(text: str, reply_to_msg_id: int) -> bool:
-    if "http" in text:
-        return True
+    for string in consts.SPAM_STRINGS:
+        if string in text:
+            return True
 
     try:
         return messages[reply_to_msg_id].is_spam

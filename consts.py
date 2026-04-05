@@ -35,6 +35,8 @@ t.me/beforeredalert""",
     "t.me/beforeredalert",
 ]
 
+SPAM_STRINGS = ["http", "#תוכןשיווקי"]
+
 MAX_QUEUE_SIZE = int(os.getenv("MAX_QUEUE_SIZE"))
 
 if __name__ == "__main__":
